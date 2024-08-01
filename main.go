@@ -2,20 +2,11 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
+	"my-tenant-backend/v2/models"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/mattn/go-sqlite3"
 )
-
-type Tenant struct {
-	FirstName string  `json:"firstName,string"`
-	LastName  string  `json:"lastName,string"`
-	Email     string  `json:"email,string"`
-	StartDate int64   `json:"startDate,int64"`
-	Rent      float64 `json:"rent,float64"`
-	Charge    float64 `json:"charge,float64"`
-}
 
 func getUsers(c *gin.Context) {
 	//Create a db connection
@@ -31,16 +22,16 @@ func getUsers(c *gin.Context) {
 	}
 	defer rows.Close()
 
-	var tenants []Tenant
+	var tenants []models.Tenant
 	for rows.Next() {
-		var tenant Tenant
+		var tenant models.Tenant
 		err = rows.Scan(&tenant.FirstName, &tenant.LastName, &tenant.Email, &tenant.StartDate, &tenant.Rent, &tenant.Charge)
 		if err != nil {
 			panic(err)
 		}
 		tenants = append(tenants, tenant)
 	}
-	fmt.Println("tenants", tenants)
+
 	c.JSON(200, tenants)
 }
 
@@ -53,5 +44,5 @@ func main() {
 
 	r.GET("/users", getUsers)
 
-	r.Run(":9000") // listen and serve on 0.0.0.0:9000
+	r.Run(":9223") // listen and serve on 0.0.0.0:9000
 }
